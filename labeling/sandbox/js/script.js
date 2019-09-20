@@ -14,6 +14,7 @@
     var sourceNode;
     var analyser;
     var javascriptNode;
+    var gainNode;
 
     // get the context from the canvas to draw on
     var ctx = $("#canvas").get()[0].getContext("2d");
@@ -55,7 +56,13 @@
         sourceNode.connect(analyser);
         analyser.connect(javascriptNode);
 
-        sourceNode.connect(context.destination);
+	// create gain node for volume control
+	gainNode = context.createGain();
+        gainNode.connect(context.destination);
+	console.log(gainNode.gain.value);
+	gainNode.gain.value = 0.1;
+
+	sourceNode.connect(gainNode);
     }
 
     // load the specified sound
@@ -132,4 +139,10 @@
 
     }
 
+  document.getElementById('volume').addEventListener('change', function() {
+    var scale = [0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5];
+    gainNode.gain.value = scale[this.value];
+    console.log(gainNode.gain.value);
+  });
+  document.getElementById('volume').value = 3;
 
